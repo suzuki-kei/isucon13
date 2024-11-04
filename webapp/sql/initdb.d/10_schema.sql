@@ -9,6 +9,7 @@ CREATE TABLE `users` (
   `description` TEXT NOT NULL,
   UNIQUE `uniq_user_name` (`name`)
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX users_name ON users(name);
 
 -- プロフィール画像
 CREATE TABLE `icons` (
@@ -16,6 +17,7 @@ CREATE TABLE `icons` (
   `user_id` BIGINT NOT NULL,
   `image` LONGBLOB NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX icons_user_id ON icons(`user_id`);
 
 -- ユーザごとのカスタムテーマ
 CREATE TABLE `themes` (
@@ -23,6 +25,7 @@ CREATE TABLE `themes` (
   `user_id` BIGINT NOT NULL,
   `dark_mode` BOOLEAN NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX themes_user_id ON themes(`user_id`);
 
 -- ライブ配信
 CREATE TABLE `livestreams` (
@@ -35,6 +38,7 @@ CREATE TABLE `livestreams` (
   `start_at` BIGINT NOT NULL,
   `end_at` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX livestreames_user_id ON livestreams(`user_id`);
 
 -- ライブ配信予約枠
 CREATE TABLE `reservation_slots` (
@@ -65,6 +69,7 @@ CREATE TABLE `livestream_viewers_history` (
   `livestream_id` BIGINT NOT NULL,
   `created_at` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX livestream_viewers_history_user_id ON livestream_viewers_history(`user_id`);
 
 -- ライブ配信に対するライブコメント
 CREATE TABLE `livecomments` (
@@ -75,6 +80,7 @@ CREATE TABLE `livecomments` (
   `tip` BIGINT NOT NULL DEFAULT 0,
   `created_at` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX livecomments_user_id ON livecomments(`user_id`);
 
 -- ユーザからのライブコメントのスパム報告
 CREATE TABLE `livecomment_reports` (
@@ -84,6 +90,8 @@ CREATE TABLE `livecomment_reports` (
   `livecomment_id` BIGINT NOT NULL,
   `created_at` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX livecomment_reports_user_id ON livecomment_reports(`user_id`);
+CREATE INDEX livecomment_reports_id ON livecomment_reports(`livestream_id`);
 
 -- 配信者からのNGワード登録
 CREATE TABLE `ng_words` (
@@ -104,3 +112,4 @@ CREATE TABLE `reactions` (
   `emoji_name` VARCHAR(255) NOT NULL,
   `created_at` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE INDEX reactions_user_id ON reactions(`user_id`);
