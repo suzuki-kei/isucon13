@@ -929,6 +929,7 @@ module Isupipe
         SQL
         user_id_to_reaction_count_map = user_reactions.reduce({}) do |map, user_reaction|
           map[user_reaction[0]] = user_reaction[1]
+          map
         end
 
         ranking = users.map do |user|
