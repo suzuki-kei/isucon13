@@ -948,7 +948,7 @@ module Isupipe
           SQL
 
           #score = reactions + tips
-          score = user_id_to_reaction_count_map[user.fetch(:id)] + tips
+          score = user_id_to_reaction_count_map.fetch(user.fetch(:id)) + tips
           UserRankingEntry.new(username: user.fetch(:name), score:)
         end
 
