@@ -913,14 +913,15 @@ module Isupipe
           WITH user_reactions AS (
               SELECT
                   u.id AS user_id,
-                  COUNT(0) AS count
+                  0 AS count
               FROM
                   users u
                   INNER JOIN livestreams l ON l.user_id = u.id
                   INNER JOIN reactions r ON r.livestream_id = l.id
           )
           SELECT
-              *
+              user_id,
+              COUNT(0) AS count
           FROM
               user_reactions
           GROUP BY
