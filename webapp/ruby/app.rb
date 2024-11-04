@@ -918,13 +918,13 @@ module Isupipe
                   users u
                   INNER JOIN livestreams l ON l.user_id = u.id
                   INNER JOIN reactions r ON r.livestream_id = l.id
-              GROUP BY
-                  user_id
           )
           SELECT
               *
           FROM
               user_reactions
+          GROUP BY
+              user_id
         SQL
         user_id_to_reaction_count_map = user_reactions.reduce({}) do |map, user_reaction|
           map[user_reaction[0]] = user_reaction[1]
