@@ -912,7 +912,7 @@ module Isupipe
         user_reactions = tx.xquery(<<~SQL, as: :array)
           WITH user_reactions AS (
               SELECT
-                  user_id,
+                  u.id AS user_id,
                   COUNT(0) AS count
               FROM
                   users u
