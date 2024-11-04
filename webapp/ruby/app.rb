@@ -909,13 +909,34 @@ module Isupipe
         # ランク算出
         users = tx.xquery('SELECT * FROM users').to_a
 
+        user_reactions = tx.xquery(<<~SQL, as: :array)
+          WITH user_reactions AS (
+              SELECT
+                  user_id,
+                  COUNT(0) AS count
+              FROM
+                  users u
+                  INNER JOIN livestreams l ON l.user_id = u.id
+                  INNER JOIN reactions r ON r.livestream_id = l.id
+              GROUP BY
+                  user_id
+          )
+          SELECT
+              *
+          FROM
+              user_reactions
+        SQL
+        user_id_to_reaction_count_map = user_reactions.reduce({}) do |map, user_reaction|
+          map[user_reaction[0]] = user_reaction[1]
+        end
+
         ranking = users.map do |user|
-          reactions = tx.xquery(<<~SQL, user.fetch(:id), as: :array).first[0]
-            SELECT COUNT(*) FROM users u
-            INNER JOIN livestreams l ON l.user_id = u.id
-            INNER JOIN reactions r ON r.livestream_id = l.id
-            WHERE u.id = ?
-          SQL
+          #reactions = tx.xquery(<<~SQL, user.fetch(:id), as: :array).first[0]
+          #  SELECT COUNT(*) FROM users u
+          #  INNER JOIN livestreams l ON l.user_id = u.id
+          #  INNER JOIN reactions r ON r.livestream_id = l.id
+          #  WHERE u.id = ?
+          #SQL
 
           tips = tx.xquery(<<~SQL, user.fetch(:id), as: :array).first[0]
             SELECT IFNULL(SUM(l2.tip), 0) FROM users u
@@ -924,7 +945,8 @@ module Isupipe
             WHERE u.id = ?
           SQL
 
-          score = reactions + tips
+          #score = reactions + tips
+          score = user_id_to_reaction_count_map[user.fetch(:id)] + tips
           UserRankingEntry.new(username: user.fetch(:name), score:)
         end
 
